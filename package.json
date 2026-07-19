@@ -1,0 +1,6 @@
+{
+  "name": "ai-code-review-pro",
+  "private": true,
+  "scripts": { "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\"", "install:all": "npm install --prefix client && npm install --prefix server" },
+  "devDependencies": { "concurrently": "^9.1.2" }
+}
