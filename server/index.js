@@ -1,4 +1,5 @@
-import 'dotenv/config';
+import './env.js';   // ⚠️ yeh sabse pehla import hona chahiye
+
 import express from 'express';
 import cors from 'cors';
 import reviewRouter from './routes/reviewRoutes.js';
@@ -7,7 +8,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
     credentials: true,
   })
 );
@@ -15,15 +16,18 @@ app.use(
 app.use(express.json({ limit: '1mb' }));
 
 // Health check
-app.get('/health', (_, res) => {
-  res.json({ status: 'ok' });
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Review API is running'
+  });
 });
 
 // Review API
 app.use('/review', reviewRouter);
 
 // Error handler
-app.use((err, _, res, __) => {
+app.use((err, req, res, next) => {
   console.error("Server Error:", err);
 
   res.status(err.status || 500).json({
@@ -32,9 +36,21 @@ app.use((err, _, res, __) => {
   });
 });
 
-// Start server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Review API listening on port ${PORT}`);
+const server = app.listen(PORT, '127.0.0.1', () => {
+  console.log(`🚀 Review API listening on http://127.0.0.1:${PORT}`);
+});
+
+// Server error handling
+server.on('error', (error) => {
+  console.error("Server failed to start:", error);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error("Uncaught Error:", error);
+});
+
+process.on('unhandledRejection', (error) => {
+  console.error("Unhandled Promise Error:", error);
 });

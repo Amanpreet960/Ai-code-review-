@@ -1,1 +1,15 @@
-import axios from 'axios'; export const reviewCode=(language,code)=>axios.post(`${import.meta.env.VITE_API_URL||'http://localhost:5000'}/review`,{language,code}).then(r=>r.data);
+import axios from "axios";
+
+const API_URL = "http://localhost:5000";
+
+export const reviewCode = async (language, code) => {
+  const res = await axios.post(
+    `${API_URL}/review`,
+    {
+      language,
+      code,
+    }
+  );
+
+  return res.data;
+};
